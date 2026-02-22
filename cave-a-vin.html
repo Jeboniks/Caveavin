@@ -1,0 +1,1157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Cave à Vin — Carlos Felipe Lemos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Montserrat:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --burgundy: #4a1528;
+    --deep: #1a0a0f;
+    --gold: #c8a96e;
+    --gold-light: #e8d5a3;
+    --cream: #f5efe6;
+    --muted: #8a7060;
+    --glass: rgba(255,255,255,0.04);
+    --border: rgba(200,169,110,0.2);
+  }
+
+  /* ── Login screen ── */
+  #login-screen {
+    position: fixed;
+    inset: 0;
+    z-index: 9999;
+    background: var(--deep);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  #login-screen::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(74,21,40,0.55) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 100%, rgba(74,21,40,0.35) 0%, transparent 60%);
+    pointer-events: none;
+  }
+
+  .login-box {
+    position: relative;
+    width: 100%;
+    max-width: 360px;
+    padding: 3rem 2.5rem 2.5rem;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    background: rgba(255,255,255,0.02);
+    backdrop-filter: blur(6px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(24px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .login-brand-sub {
+    font-size: 0.6rem;
+    letter-spacing: 0.28em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .login-brand-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.2rem;
+    font-weight: 300;
+    color: var(--cream);
+    letter-spacing: 0.02em;
+    margin-bottom: 2.2rem;
+  }
+
+  .login-brand-title em { font-style: italic; color: var(--gold-light); }
+
+  .login-field {
+    width: 100%;
+    margin-bottom: 0.9rem;
+  }
+
+  .login-field label {
+    display: block;
+    font-size: 0.58rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 0.4rem;
+  }
+
+  .login-field input {
+    width: 100%;
+    background: rgba(255,255,255,0.04);
+    border: 1px solid var(--border);
+    color: var(--cream);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.85rem;
+    font-weight: 300;
+    padding: 0.75rem 1rem;
+    border-radius: 3px;
+    outline: none;
+    transition: border-color 0.2s;
+    letter-spacing: 0.05em;
+  }
+
+  .login-field input:focus { border-color: var(--gold); }
+
+  .login-btn {
+    width: 100%;
+    margin-top: 1rem;
+    padding: 0.85rem;
+    background: linear-gradient(135deg, var(--burgundy), #6a2040);
+    border: 1px solid rgba(200,169,110,0.3);
+    color: var(--gold-light);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.25s;
+  }
+
+  .login-btn:hover {
+    background: linear-gradient(135deg, #5e1b30, #7a2550);
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .login-error {
+    margin-top: 0.9rem;
+    font-size: 0.68rem;
+    color: #c06060;
+    letter-spacing: 0.08em;
+    text-align: center;
+    height: 1em;
+    opacity: 0;
+    transition: opacity 0.2s;
+  }
+
+  .login-error.show { opacity: 1; }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--deep);
+    color: var(--cream);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background: 
+      radial-gradient(ellipse 80% 60% at 20% 0%, rgba(74,21,40,0.5) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 80% at 80% 100%, rgba(74,21,40,0.3) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  /* Header */
+  header {
+    position: relative;
+    z-index: 10;
+    padding: 2.5rem 3rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    flex-wrap: wrap;
+  }
+
+  .brand {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .brand-sub {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.65rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.4rem;
+  }
+
+  .brand-title {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.8rem;
+    font-weight: 300;
+    line-height: 1;
+    color: var(--cream);
+    letter-spacing: 0.02em;
+  }
+
+  .brand-title em {
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  /* Portfolio stats bar */
+  .stats-bar {
+    display: flex;
+    gap: 2.5rem;
+    flex-wrap: wrap;
+  }
+
+  .stat {
+    text-align: right;
+  }
+
+  .stat-value {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.6rem;
+    font-weight: 400;
+    color: var(--gold-light);
+    line-height: 1;
+  }
+
+  .stat-label {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-top: 0.2rem;
+  }
+
+  /* Controls */
+  .controls {
+    position: relative;
+    z-index: 10;
+    padding: 1.5rem 3rem;
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    flex-wrap: wrap;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .search-wrap {
+    position: relative;
+    flex: 1;
+    min-width: 200px;
+    max-width: 340px;
+  }
+
+  .search-wrap svg {
+    position: absolute;
+    left: 0.9rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--muted);
+    width: 14px;
+    height: 14px;
+  }
+
+  input[type="text"] {
+    width: 100%;
+    background: var(--glass);
+    border: 1px solid var(--border);
+    color: var(--cream);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 300;
+    padding: 0.65rem 1rem 0.65rem 2.4rem;
+    border-radius: 3px;
+    outline: none;
+    transition: border-color 0.2s;
+  }
+
+  input[type="text"]:focus { border-color: var(--gold); }
+  input[type="text"]::placeholder { color: var(--muted); }
+
+  select {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    color: var(--cream);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.78rem;
+    font-weight: 300;
+    padding: 0.65rem 2rem 0.65rem 0.9rem;
+    border-radius: 3px;
+    outline: none;
+    appearance: none;
+    cursor: pointer;
+    transition: border-color 0.2s;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23c8a96e'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.7rem center;
+  }
+
+  select:focus { border-color: var(--gold); }
+  select option { background: #2a1018; color: var(--cream); }
+
+  .sort-btns {
+    display: flex;
+    gap: 0.4rem;
+    margin-left: auto;
+  }
+
+  .sort-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    font-family: 'Montserrat', sans-serif;
+    font-size: 0.65rem;
+    font-weight: 500;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    padding: 0.55rem 0.9rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    white-space: nowrap;
+  }
+
+  .sort-btn:hover, .sort-btn.active {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  .view-toggle {
+    display: flex;
+    gap: 0.4rem;
+  }
+
+  .view-btn {
+    background: none;
+    border: 1px solid var(--border);
+    color: var(--muted);
+    padding: 0.55rem 0.75rem;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex;
+    align-items: center;
+  }
+
+  .view-btn svg { width: 15px; height: 15px; }
+  .view-btn:hover, .view-btn.active { border-color: var(--gold); color: var(--gold); }
+
+  /* Results count */
+  .results-info {
+    position: relative;
+    z-index: 10;
+    padding: 0.8rem 3rem;
+    font-size: 0.68rem;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+
+  .results-info span { color: var(--gold); }
+
+  /* Main content */
+  main {
+    position: relative;
+    z-index: 10;
+    padding: 0 3rem 4rem;
+  }
+
+  /* Grid view */
+  .wine-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 1.2rem;
+  }
+
+  /* List view */
+  .wine-grid.list-view {
+    grid-template-columns: 1fr;
+    gap: 0;
+  }
+
+  /* Wine card */
+  .wine-card {
+    background: var(--glass);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 1.4rem;
+    cursor: pointer;
+    transition: all 0.25s;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .wine-card::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--burgundy), var(--gold));
+    opacity: 0;
+    transition: opacity 0.25s;
+  }
+
+  .wine-card:hover {
+    border-color: rgba(200,169,110,0.5);
+    background: rgba(255,255,255,0.06);
+    transform: translateY(-2px);
+  }
+
+  .wine-card:hover::before { opacity: 1; }
+
+  /* Score badge */
+  .score-badge {
+    position: absolute;
+    top: 1.2rem;
+    right: 1.2rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .score-badge small {
+    font-size: 0.55rem;
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 400;
+    color: var(--muted);
+    display: block;
+    text-align: right;
+    margin-top: 1px;
+    letter-spacing: 0.1em;
+  }
+
+  .wine-location-tag {
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    border: 1px solid rgba(200,169,110,0.35);
+    padding: 0.15rem 0.5rem;
+    border-radius: 2px;
+    display: inline-block;
+    margin-bottom: 0.7rem;
+  }
+
+  .wine-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.15rem;
+    font-weight: 400;
+    line-height: 1.25;
+    color: var(--cream);
+    margin-bottom: 0.25rem;
+    padding-right: 2.5rem;
+  }
+
+  .wine-vintage {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 0.95rem;
+    font-style: italic;
+    color: var(--gold-light);
+    margin-bottom: 0.7rem;
+  }
+
+  .wine-meta {
+    font-size: 0.68rem;
+    color: var(--muted);
+    margin-bottom: 0.9rem;
+    line-height: 1.6;
+  }
+
+  .wine-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-top: 0.8rem;
+    padding-top: 0.8rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .wine-bottles {
+    font-size: 0.68rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .wine-bottles strong {
+    font-size: 1rem;
+    font-family: 'Cormorant Garamond', serif;
+    font-weight: 600;
+    color: var(--cream);
+    margin-right: 0.2rem;
+  }
+
+  .wine-price {
+    text-align: right;
+  }
+
+  .wine-price .price-val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    font-weight: 400;
+    color: var(--gold-light);
+  }
+
+  .wine-price .price-label {
+    font-size: 0.55rem;
+    color: var(--muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    display: block;
+    text-align: right;
+  }
+
+  .drink-window {
+    margin-top: 0.5rem;
+    font-size: 0.63rem;
+    color: var(--muted);
+    letter-spacing: 0.05em;
+  }
+
+  .drink-bar {
+    height: 2px;
+    background: rgba(255,255,255,0.07);
+    border-radius: 1px;
+    margin-top: 0.3rem;
+    position: relative;
+    overflow: visible;
+  }
+
+  .drink-fill {
+    position: absolute;
+    height: 100%;
+    border-radius: 1px;
+    background: linear-gradient(90deg, var(--burgundy), var(--gold));
+  }
+
+  /* List view card */
+  .wine-grid.list-view .wine-card {
+    border-radius: 0;
+    border-left: none;
+    border-right: none;
+    border-top: none;
+    background: none;
+    padding: 1rem 0.5rem;
+    display: grid;
+    grid-template-columns: 1fr auto;
+    gap: 0.5rem;
+    transform: none !important;
+  }
+
+  .wine-grid.list-view .wine-card::before { display: none; }
+  .wine-grid.list-view .wine-card:hover { background: rgba(255,255,255,0.02); }
+
+  .wine-grid.list-view .wine-card .score-badge {
+    position: static;
+    align-self: center;
+  }
+
+  .wine-grid.list-view .drink-window,
+  .wine-grid.list-view .drink-bar { display: none; }
+
+  /* Modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(10,3,7,0.85);
+    z-index: 100;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+    backdrop-filter: blur(4px);
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal {
+    background: #1e0d14;
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    max-width: 540px;
+    width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    position: relative;
+    animation: modalIn 0.25s ease;
+  }
+
+  @keyframes modalIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .modal-header {
+    padding: 2rem 2rem 1.5rem;
+    border-bottom: 1px solid var(--border);
+    position: relative;
+  }
+
+  .modal-close {
+    position: absolute;
+    top: 1.5rem;
+    right: 1.5rem;
+    background: none;
+    border: none;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 1.4rem;
+    line-height: 1;
+    padding: 0.2rem;
+    transition: color 0.2s;
+  }
+
+  .modal-close:hover { color: var(--cream); }
+
+  .modal-locker {
+    font-size: 0.6rem;
+    letter-spacing: 0.2em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 0.5rem;
+  }
+
+  .modal-wine-name {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.8rem;
+    font-weight: 400;
+    line-height: 1.2;
+    margin-bottom: 0.3rem;
+  }
+
+  .modal-vintage {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+    color: var(--gold-light);
+  }
+
+  .modal-body {
+    padding: 1.5rem 2rem;
+  }
+
+  .detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.2rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .detail-item label {
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 0.3rem;
+  }
+
+  .detail-item .val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.1rem;
+    color: var(--cream);
+  }
+
+  .big-score {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 2.5rem;
+    font-weight: 600;
+    color: var(--gold);
+    line-height: 1;
+  }
+
+  .big-score small {
+    font-size: 0.9rem;
+    color: var(--muted);
+    font-family: 'Montserrat', sans-serif;
+    font-weight: 300;
+  }
+
+  .modal-drink {
+    margin-top: 1rem;
+    padding-top: 1rem;
+    border-top: 1px solid var(--border);
+  }
+
+  .modal-drink label {
+    font-size: 0.58rem;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+
+  .modal-drink .val {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1rem;
+    color: var(--gold-light);
+  }
+
+  .modal-notes {
+    margin-top: 1rem;
+    padding: 0.9rem 1rem;
+    background: rgba(255,255,255,0.02);
+    border-radius: 3px;
+    border-left: 2px solid var(--gold);
+    font-size: 0.78rem;
+    color: var(--muted);
+    font-style: italic;
+  }
+
+  /* Empty state */
+  .empty {
+    text-align: center;
+    padding: 5rem 2rem;
+    color: var(--muted);
+  }
+
+  .empty svg {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 1rem;
+    opacity: 0.3;
+  }
+
+  .empty p {
+    font-family: 'Cormorant Garamond', serif;
+    font-size: 1.2rem;
+    font-style: italic;
+  }
+
+  /* Scrollbar */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  /* Section headers in list */
+  .section-head {
+    font-size: 0.6rem;
+    letter-spacing: 0.25em;
+    text-transform: uppercase;
+    color: var(--gold);
+    padding: 1.5rem 0 0.5rem;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 0;
+    position: relative;
+    z-index: 10;
+  }
+
+  @media (max-width: 700px) {
+    header { padding: 1.5rem 1.5rem 1rem; }
+    .controls { padding: 1rem 1.5rem; }
+    main { padding: 0 1.5rem 3rem; }
+    .results-info { padding: 0.6rem 1.5rem; }
+    .brand-title { font-size: 2rem; }
+    .stats-bar { gap: 1.5rem; }
+    .sort-btns { display: none; }
+    .wine-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="brand">
+    <div class="brand-sub">Collection Privée · Feb 2026</div>
+    <div class="brand-title"><em>Cave</em> à Vin</div>
+  </div>
+  <div class="stats-bar">
+    <div class="stat">
+      <div class="stat-value" id="stat-bottles">286</div>
+      <div class="stat-label">Bouteilles</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="stat-wines">—</div>
+      <div class="stat-label">Références</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="stat-value">—</div>
+      <div class="stat-label">Valeur MTM</div>
+    </div>
+    <div class="stat">
+      <div class="stat-value" id="stat-avg">—</div>
+      <div class="stat-label">Moy. / bouteille</div>
+    </div>
+  </div>
+</header>
+
+<div class="controls">
+  <div class="search-wrap">
+    <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M9 3.5a5.5 5.5 0 100 11 5.5 5.5 0 000-11zM2 9a7 7 0 1112.452 4.391l3.328 3.329a.75.75 0 11-1.06 1.06l-3.329-3.328A7 7 0 012 9z" clip-rule="evenodd"/></svg>
+    <input type="text" id="search" placeholder="Search wine, region, varietal…">
+  </div>
+
+  <select id="filter-location">
+    <option value="">All Locations</option>
+    <option value="1984">Locker 1984</option>
+    <option value="1976">Locker 1976</option>
+    <option value="1734">Locker 1734</option>
+    <option value="Home">Home</option>
+  </select>
+
+  <select id="filter-country">
+    <option value="">All Countries</option>
+    <option value="France">France</option>
+    <option value="USA">USA</option>
+    <option value="Italy">Italy</option>
+  </select>
+
+  <select id="filter-varietal">
+    <option value="">All Varietals</option>
+  </select>
+
+  <div class="sort-btns">
+    <button class="sort-btn active" data-sort="name">Name</button>
+    <button class="sort-btn" data-sort="vintage">Vintage</button>
+    <button class="sort-btn" data-sort="rating">Rating</button>
+    <button class="sort-btn" data-sort="price">Price</button>
+  </div>
+
+  <div class="view-toggle">
+    <button class="view-btn active" id="grid-view" title="Grid view">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path d="M5 3a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2V5a2 2 0 00-2-2H5zM5 11a2 2 0 00-2 2v2a2 2 0 002 2h2a2 2 0 002-2v-2a2 2 0 00-2-2H5zM11 5a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V5zM11 13a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"/></svg>
+    </button>
+    <button class="view-btn" id="list-view" title="List view">
+      <svg viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M2 4.75A.75.75 0 012.75 4h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 4.75zm0 10.5a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75a.75.75 0 01-.75-.75zM2 10a.75.75 0 01.75-.75h14.5a.75.75 0 010 1.5H2.75A.75.75 0 012 10z" clip-rule="evenodd"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="results-info" id="results-info"></div>
+
+<main>
+  <div class="wine-grid" id="wine-grid"></div>
+</main>
+
+<!-- Modal -->
+<div class="modal-overlay" id="modal">
+  <div class="modal">
+    <div class="modal-header">
+      <button class="modal-close" id="modal-close">×</button>
+      <div class="modal-locker" id="m-location"></div>
+      <div class="modal-wine-name" id="m-name"></div>
+      <div class="modal-vintage" id="m-vintage"></div>
+    </div>
+    <div class="modal-body">
+      <div class="detail-grid">
+        <div class="detail-item">
+          <label>Score</label>
+          <div class="big-score" id="m-score"></div>
+        </div>
+        <div class="detail-item">
+          <label>Bottles</label>
+          <div class="val" id="m-bottles"></div>
+        </div>
+        <div class="detail-item">
+          <label>Varietal</label>
+          <div class="val" id="m-varietal"></div>
+        </div>
+        <div class="detail-item">
+          <label>Country</label>
+          <div class="val" id="m-country"></div>
+        </div>
+        <div class="detail-item">
+          <label>Region</label>
+          <div class="val" id="m-region"></div>
+        </div>
+        <div class="detail-item">
+          <label>MTM Value</label>
+          <div class="val" id="m-mtm"></div>
+        </div>
+      </div>
+      <div class="modal-drink" id="m-drink-wrap">
+        <label>Drinking Window</label>
+        <div class="val" id="m-drink"></div>
+      </div>
+      <div class="modal-notes" id="m-notes" style="display:none"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+const WINES = [{"wine":"Pott & Daughters - Cab. Sauv.","vintage":2017,"bottles":4,"varietal":"Cabernet Sauvignon","country":"USA","region":"Napa Valley, CA","rating":"94 WA","price":120.0,"mtm":480.0,"drinking":"2023-2035","notes":"","location":"1984"},{"wine":"Tres Perlas - Bridge - Cab. Sauv.","vintage":2015,"bottles":1,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Napa Valley, CA","rating":"92 WA","price":65.0,"mtm":65.0,"drinking":"2022-2030","notes":"","location":"1984"},{"wine":"Tres Perlas - Renteria 360","vintage":2016,"bottles":2,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Napa Valley, CA","rating":"92 WA","price":65.0,"mtm":130.0,"drinking":"2022-2031","notes":"","location":"1984"},{"wine":"Tres Perlas - Bridge - Cab. Sauv.","vintage":2014,"bottles":1,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Napa Valley, CA","rating":"92 WA","price":60.0,"mtm":60.0,"drinking":"2022-2030","notes":"","location":"1984"},{"wine":"Tres Perlas (891)","vintage":2015,"bottles":3,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Napa Valley, CA","rating":"92 WA","price":65.0,"mtm":195.0,"drinking":"2022-2030","notes":"","location":"1984"},{"wine":"Brittan Vineyards - Gestalt Pinot Noir","vintage":2015,"bottles":1,"varietal":"Pinot Noir","country":"USA","region":"McMinnville, OR","rating":"93 WS","price":60.0,"mtm":60.0,"drinking":"2022-2030","notes":"","location":"1984"},{"wine":"Brittan Vineyards - Basalt Block","vintage":2016,"bottles":2,"varietal":"Pinot Noir","country":"USA","region":"McMinnville, OR","rating":"94 WS","price":60.0,"mtm":120.0,"drinking":"2022-2031","notes":"","location":"1984"},{"wine":"Brittan Vineyards - Cygnus Block","vintage":2015,"bottles":1,"varietal":"Pinot Noir","country":"USA","region":"McMinnville, OR","rating":"93 WS","price":60.0,"mtm":60.0,"drinking":"2022-2030","notes":"","location":"1984"},{"wine":"Brittan Vineyards - Cygnus Block","vintage":2016,"bottles":2,"varietal":"Pinot Noir","country":"USA","region":"McMinnville, OR","rating":"93 WS","price":60.0,"mtm":120.0,"drinking":"2022-2031","notes":"","location":"1984"},{"wine":"Kapcsandy - Estate Cuvee","vintage":2017,"bottles":1,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Yountville, Napa Valley","rating":"96 WA","price":148.0,"mtm":148.0,"drinking":"2025-2040","notes":"","location":"1984"},{"wine":"Kapcsandy - Grand Vin","vintage":2017,"bottles":1,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Yountville, Napa Valley","rating":"98 WA","price":558.0,"mtm":558.0,"drinking":"2025-2042","notes":"","location":"1984"},{"wine":"Kapcsandy - Rapszodia","vintage":2017,"bottles":1,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Yountville, Napa Valley","rating":"95 WA","price":260.0,"mtm":260.0,"drinking":"2025-2040","notes":"","location":"1984"},{"wine":"Kapcsandy - Roberta's Reserve","vintage":2017,"bottles":1,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Yountville, Napa Valley","rating":"96 WA","price":280.0,"mtm":280.0,"drinking":"2025-2040","notes":"","location":"1984"},{"wine":"Turley - Petite Syrah","vintage":2017,"bottles":2,"varietal":"Petite Sirah","country":"USA","region":"Napa Valley, CA","rating":"93 WA","price":70.0,"mtm":140.0,"drinking":"2023-2033","notes":"","location":"1984"},{"wine":"Comte Armand - Pommard - Clos Des Eperneaux","vintage":2015,"bottles":3,"varietal":"Pinot Noir","country":"France","region":"Pommard, C\u00f4te de Beaune","rating":"95 WA","price":350.0,"mtm":1050.0,"drinking":"2025-2040","notes":"Cardboard Case","location":"1984"},{"wine":"Covert - Coombsville Cab. Sauv.","vintage":2015,"bottles":3,"varietal":"Cabernet Sauvignon","country":"USA","region":"Coombsville, Napa Valley","rating":"93 WA","price":95.0,"mtm":285.0,"drinking":"2022-2032","notes":"","location":"1984"},{"wine":"Covert - Coombsville Cab. Sauv.","vintage":2016,"bottles":2,"varietal":"Cabernet Sauvignon","country":"USA","region":"Coombsville, Napa Valley","rating":"93 WA","price":100.0,"mtm":200.0,"drinking":"2022-2033","notes":"","location":"1984"},{"wine":"Covert - Clone 341 Cab Sauv.","vintage":2016,"bottles":1,"varietal":"Cabernet Sauvignon","country":"USA","region":"Coombsville, Napa Valley","rating":"93 WA","price":100.0,"mtm":100.0,"drinking":"2022-2033","notes":"","location":"1984"},{"wine":"Covert - Coombsville Cab. Franc.","vintage":2016,"bottles":1,"varietal":"Cabernet Franc","country":"USA","region":"Coombsville, Napa Valley","rating":"92 WA","price":100.0,"mtm":100.0,"drinking":"2022-2033","notes":"","location":"1984"},{"wine":"Covert Sage Vineyards - Cab Sauv.","vintage":2016,"bottles":1,"varietal":"Cabernet Sauvignon","country":"USA","region":"Coombsville, Napa Valley","rating":"93 WA","price":100.0,"mtm":100.0,"drinking":"2022-2033","notes":"","location":"1984"},{"wine":"The Maiden","vintage":2016,"bottles":1,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Napa Valley, CA","rating":"94 WA","price":200.0,"mtm":200.0,"drinking":"2024-2038","notes":"","location":"1984"},{"wine":"Chateau Pavie","vintage":2016,"bottles":5,"varietal":"Merlot / Cab. Franc","country":"France","region":"Saint-\u00c9milion, Bordeaux","rating":"98 WA","price":370.0,"mtm":1850.0,"drinking":"2026-2046","notes":"","location":"1984"},{"wine":"Chateau Pavie","vintage":2015,"bottles":3,"varietal":"Merlot / Cab. Franc","country":"France","region":"Saint-\u00c9milion, Bordeaux","rating":"98 WA","price":350.0,"mtm":1050.0,"drinking":"2025-2045","notes":"","location":"1984"},{"wine":"Chateau Pavie","vintage":2017,"bottles":2,"varietal":"Merlot / Cab. Franc","country":"France","region":"Saint-\u00c9milion, Bordeaux","rating":"98 WA","price":360.0,"mtm":720.0,"drinking":"2025-2042","notes":"","location":"1984"},{"wine":"Domaine Mongeard-Mugneret Grands Echezeaux Grand Cru","vintage":2007,"bottles":2,"varietal":"Pinot Noir","country":"France","region":"Grands \u00c9chezeaux, Burgundy","rating":"94 WS","price":350.0,"mtm":700.0,"drinking":"2022-2035","notes":"","location":"1984"},{"wine":"Lafite Rothschild","vintage":2016,"bottles":3,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Pauillac, Bordeaux","rating":"98 WA","price":950.0,"mtm":2850.0,"drinking":"2026-2050","notes":"","location":"1984"},{"wine":"Haut Brion","vintage":2017,"bottles":2,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Pessac-L\u00e9ognan, Bordeaux","rating":"100 WA","price":700.0,"mtm":1400.0,"drinking":"2025-2040","notes":"","location":"1984"},{"wine":"Cos D' Estournel","vintage":2017,"bottles":2,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Saint-Est\u00e8phe, Bordeaux","rating":"96 WS","price":280.0,"mtm":560.0,"drinking":"2025-2040","notes":"","location":"1984"},{"wine":"Kapcsandy Grand Vin","vintage":2016,"bottles":1,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Yountville, Napa Valley","rating":"96 WA","price":325.0,"mtm":325.0,"drinking":"2024-2040","notes":"","location":"1984"},{"wine":"Kapcsandy Roberta's Reserve","vintage":2016,"bottles":1,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Yountville, Napa Valley","rating":"96 WA","price":300.0,"mtm":300.0,"drinking":"2024-2038","notes":"","location":"1984"},{"wine":"Kapcsandy Rapszodia","vintage":2016,"bottles":1,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Yountville, Napa Valley","rating":"95 WA","price":280.0,"mtm":280.0,"drinking":"2024-2038","notes":"","location":"1984"},{"wine":"Harlan Estate","vintage":2015,"bottles":2,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Napa Valley, CA","rating":"100 WA","price":1480.0,"mtm":2960.0,"drinking":"2025-2045","notes":"","location":"1984"},{"wine":"Chateau Lafite Rothschild","vintage":2017,"bottles":6,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Pauillac, Bordeaux","rating":"98 WA","price":850.0,"mtm":5100.0,"drinking":"2025-2045","notes":"Wood case (not original)","location":"1984"},{"wine":"Chateau Ausone","vintage":2017,"bottles":3,"varietal":"Cab. Franc / Cab. Sauv.","country":"France","region":"Saint-\u00c9milion, Bordeaux","rating":"100 WA","price":1200.0,"mtm":3600.0,"drinking":"2028-2055","notes":"Wood case (not original)","location":"1984"},{"wine":"Ducru-Beaucaillou","vintage":2017,"bottles":3,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Saint-Julien, Bordeaux","rating":"97 WS","price":200.0,"mtm":600.0,"drinking":"2025-2038","notes":"","location":"1984"},{"wine":"Cos D ' Estournel","vintage":2017,"bottles":6,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Saint-Est\u00e8phe, Bordeaux","rating":"96 WS","price":280.0,"mtm":1680.0,"drinking":"2025-2040","notes":"Original Wooden Case","location":"1984"},{"wine":"Chateau Pavie","vintage":2017,"bottles":6,"varietal":"Merlot / Cab. Franc","country":"France","region":"Saint-\u00c9milion, Bordeaux","rating":"98 WA","price":360.0,"mtm":2160.0,"drinking":"2025-2042","notes":"Original Wooden Case","location":"1984"},{"wine":"Pott - Incubo","vintage":2017,"bottles":1,"varietal":"Cabernet Sauvignon","country":"USA","region":"Napa Valley, CA","rating":"96 WA","price":120.0,"mtm":120.0,"drinking":"2023-2035","notes":"1.5L","location":"1984"},{"wine":"Aonair","vintage":2016,"bottles":3,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Napa Valley, CA","rating":"94 WA","price":85.0,"mtm":255.0,"drinking":"2022-2033","notes":"","location":"1984"},{"wine":"Dom Perignon","vintage":2008,"bottles":1,"varietal":"Chardonnay / Pinot Noir","country":"France","region":"\u00c9pernay, Champagne","rating":"97 WA","price":220.0,"mtm":220.0,"drinking":"2022-2035","notes":"","location":"1984"},{"wine":"Turley - Petite Syrah","vintage":2017,"bottles":2,"varietal":"Petite Sirah","country":"USA","region":"Napa Valley, CA","rating":"93 WA","price":70.0,"mtm":140.0,"drinking":"2023-2033","notes":"","location":"1984"},{"wine":"Casanova di Neri","vintage":2010,"bottles":1,"varietal":"Sangiovese Grosso","country":"Italy","region":"Montalcino, Tuscany","rating":"100 WA","price":160.0,"mtm":160.0,"drinking":"2024-2038","notes":"","location":"1984"},{"wine":"Covert - Coomsville Cab. Sauv.","vintage":2018,"bottles":6,"varietal":"Cabernet Sauvignon","country":"USA","region":"Coombsville, Napa Valley","rating":"94 WA","price":110.0,"mtm":660.0,"drinking":"2024-2035","notes":"Original Wooden Case","location":"1984"},{"wine":"Covert - Sage Estate Cab. Sauv.","vintage":2018,"bottles":2,"varietal":"Cabernet Sauvignon","country":"USA","region":"Coombsville, Napa Valley","rating":"93 WA","price":110.0,"mtm":220.0,"drinking":"2024-2035","notes":"Original Wooden Case","location":"1984"},{"wine":"Angelus","vintage":2018,"bottles":6,"varietal":"Merlot / Cab. Franc","country":"France","region":"Saint-\u00c9milion, Bordeaux","rating":"100 WA","price":350.0,"mtm":2100.0,"drinking":"2026-2048","notes":"Original Wooden Case","location":"1984"},{"wine":"Clinet","vintage":2015,"bottles":6,"varietal":"Merlot / Cab. Franc","country":"France","region":"Pomerol, Bordeaux","rating":"95 WS","price":100.0,"mtm":600.0,"drinking":"2024-2035","notes":"Original Wood","location":"1984"},{"wine":"Clinet","vintage":2015,"bottles":6,"varietal":"Merlot / Cab. Franc","country":"France","region":"Pomerol, Bordeaux","rating":"95 WS","price":100.0,"mtm":600.0,"drinking":"2024-2035","notes":"Original Wood","location":"1984"},{"wine":"Chateau Palmer","vintage":2018,"bottles":6,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Margaux, Bordeaux","rating":"98 WA","price":300.0,"mtm":1800.0,"drinking":"2026-2045","notes":"Original Wood","location":"1984"},{"wine":"Chateau Fonplegade - Grand Cru - Bordeaux","vintage":2015,"bottles":6,"varietal":"Merlot / Cab. Franc","country":"France","region":"Saint-\u00c9milion, Bordeaux","rating":"92 WS","price":45.0,"mtm":270.0,"drinking":"2022-2030","notes":"Wood","location":"1976"},{"wine":"Casanova di Neri - Tenuta Nuova - Brunello Di Montalcino","vintage":2007,"bottles":3,"varietal":"Sangiovese Grosso","country":"Italy","region":"Montalcino, Tuscany","rating":"100 WA","price":140.0,"mtm":420.0,"drinking":"2022-2035","notes":"","location":"1976"},{"wine":"Casanova di Neri - Tenuta Nuova - Brunello Di Montalcino","vintage":2010,"bottles":1,"varietal":"Sangiovese Grosso","country":"Italy","region":"Montalcino, Tuscany","rating":"100 WA","price":160.0,"mtm":160.0,"drinking":"2024-2038","notes":"","location":"1976"},{"wine":"Casanova di Neri - Tenuta Nuova - Brunello Di Montalcino","vintage":2012,"bottles":1,"varietal":"Sangiovese Grosso","country":"Italy","region":"Montalcino, Tuscany","rating":"100 WA","price":130.0,"mtm":130.0,"drinking":"2024-2036","notes":"","location":"1976"},{"wine":"Casanova di Neri - Tenuta Nuova - Brunello Di Montalcino","vintage":2006,"bottles":1,"varietal":"Sangiovese Grosso","country":"Italy","region":"Montalcino, Tuscany","rating":"100 WA","price":95.0,"mtm":95.0,"drinking":"2022-2032","notes":"","location":"1976"},{"wine":"Domaine Drouhin Pinot Noir- Oregon","vintage":2014,"bottles":2,"varietal":"Pinot Noir","country":"USA","region":"Willamette Valley, OR","rating":"92 WS","price":55.0,"mtm":110.0,"drinking":"2022-2030","notes":"Wood","location":"1976"},{"wine":"Domaine Drouhin - Laurene Pinot Noir","vintage":2014,"bottles":10,"varietal":"Pinot Noir","country":"USA","region":"Willamette Valley, OR","rating":"95 WS","price":85.0,"mtm":850.0,"drinking":"2022-2032","notes":"","location":"1976"},{"wine":"Turley - Zinfandel Hayne Vineyard","vintage":2015,"bottles":1,"varietal":"Zinfandel","country":"USA","region":"Napa Valley, CA","rating":"94 WA","price":75.0,"mtm":75.0,"drinking":"2022-2032","notes":"Wood","location":"1976"},{"wine":"Turley - Petite Syrah Hayne Vineyard","vintage":2013,"bottles":2,"varietal":"Petite Sirah","country":"USA","region":"Napa Valley, CA","rating":"95 WA","price":75.0,"mtm":150.0,"drinking":"2022-2030","notes":"","location":"1976"},{"wine":"Turley - Petite Syrah Hayne Vineyard","vintage":2000,"bottles":2,"varietal":"Petite Sirah","country":"USA","region":"Napa Valley, CA","rating":"95 WA","price":120.0,"mtm":240.0,"drinking":"2020-2030","notes":"","location":"1976"},{"wine":"Turley - Petite Syrah Hayne Vineyard","vintage":2012,"bottles":3,"varietal":"Petite Sirah","country":"USA","region":"Napa Valley, CA","rating":"95 WA","price":70.0,"mtm":210.0,"drinking":"2022-2030","notes":"","location":"1976"},{"wine":"Turley - Petite Syrah Hayne Vineyard","vintage":2011,"bottles":2,"varietal":"Petite Sirah","country":"USA","region":"Napa Valley, CA","rating":"95 WA","price":70.0,"mtm":140.0,"drinking":"2020-2028","notes":"","location":"1976"},{"wine":"Turley - Petite Syrah Hayne Vineyard","vintage":2015,"bottles":1,"varietal":"Petite Sirah","country":"USA","region":"Napa Valley, CA","rating":"95 WA","price":75.0,"mtm":75.0,"drinking":"2022-2032","notes":"","location":"1976"},{"wine":"Turley - Petite Syrah Hayne Vineyard","vintage":2007,"bottles":1,"varietal":"Petite Sirah","country":"USA","region":"Napa Valley, CA","rating":"95 WA","price":85.0,"mtm":85.0,"drinking":"2020-2028","notes":"","location":"1976"},{"wine":"Turley - Petite Syrah Hayne Vineyard","vintage":2003,"bottles":1,"varietal":"Petite Sirah","country":"USA","region":"Napa Valley, CA","rating":"95 WA","price":90.0,"mtm":90.0,"drinking":"2020-2028","notes":"","location":"1976"},{"wine":"Turley - Petite Syrah Hayne Vineyard","vintage":1999,"bottles":1,"varietal":"Petite Sirah","country":"USA","region":"Napa Valley, CA","rating":"95 WA","price":110.0,"mtm":110.0,"drinking":"2020-2030","notes":"","location":"1976"},{"wine":"Brittan Vineyard - Pinot Noir - Basalt Block","vintage":2013,"bottles":6,"varietal":"Pinot Noir","country":"USA","region":"McMinnville, OR","rating":"94 WS","price":65.0,"mtm":390.0,"drinking":"2022-2030","notes":"Wood","location":"1976"},{"wine":"Brittan Vineyard - Pinot Noir - Basalt Block","vintage":2014,"bottles":6,"varietal":"Pinot Noir","country":"USA","region":"McMinnville, OR","rating":"94 WS","price":65.0,"mtm":390.0,"drinking":"2022-2031","notes":"","location":"1976"},{"wine":"Kapcsandy - Estate Cuvee - State Lane","vintage":2014,"bottles":5,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Yountville, Napa Valley","rating":"96 WA","price":146.0,"mtm":730.0,"drinking":"2024-2038","notes":"Cardboard","location":"1976"},{"wine":"Kapcsandy - Estate Cuvee - State Lane","vintage":2011,"bottles":2,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Yountville, Napa Valley","rating":"96 WA","price":131.0,"mtm":262.0,"drinking":"2022-2032","notes":"","location":"1976"},{"wine":"Kapcsandy - Roberta's Reserve - Estate Cuvee - State Lane","vintage":2011,"bottles":5,"varietal":"Cab. Sauv. blend","country":"USA","region":"Yountville, Napa Valley","rating":"96 WA","price":180.0,"mtm":900.0,"drinking":"2022-2035","notes":"","location":"1976"},{"wine":"Turley - Petite Syrah Hayne Vineyard","vintage":2016,"bottles":3,"varietal":"Petite Sirah","country":"USA","region":"Napa Valley, CA","rating":"95 WA","price":80.0,"mtm":240.0,"drinking":"2023-2033","notes":"Wood","location":"1976"},{"wine":"Turley - Petite Syrah Hayne Vineyard","vintage":1997,"bottles":1,"varietal":"Petite Sirah","country":"USA","region":"Napa Valley, CA","rating":"95 WA","price":130.0,"mtm":130.0,"drinking":"2020-2030","notes":"","location":"1976"},{"wine":"Turley - Petite Syrah Hayne Vineyard","vintage":1996,"bottles":1,"varietal":"Petite Sirah","country":"USA","region":"Napa Valley, CA","rating":"95 WA","price":120.0,"mtm":120.0,"drinking":"2020-2030","notes":"","location":"1976"},{"wine":"Turley - Petite Syrah Hayne Vineyard","vintage":2009,"bottles":1,"varietal":"Petite Sirah","country":"USA","region":"Napa Valley, CA","rating":"95 WA","price":75.0,"mtm":75.0,"drinking":"2020-2027","notes":"","location":"1976"},{"wine":"Turley - Petite Syrah Hayne Vineyard","vintage":2007,"bottles":1,"varietal":"Petite Sirah","country":"USA","region":"Napa Valley, CA","rating":"95 WA","price":85.0,"mtm":85.0,"drinking":"2020-2028","notes":"","location":"1976"},{"wine":"Turley - Petite Syrah Hayne Vineyard","vintage":2003,"bottles":1,"varietal":"Petite Sirah","country":"USA","region":"Napa Valley, CA","rating":"95 WA","price":90.0,"mtm":90.0,"drinking":"2020-2028","notes":"","location":"1976"},{"wine":"Turley - Petite Syrah Hayne Vineyard","vintage":2008,"bottles":1,"varietal":"Petite Sirah","country":"USA","region":"Napa Valley, CA","rating":"95 WA","price":80.0,"mtm":80.0,"drinking":"2020-2027","notes":"","location":"1976"},{"wine":"Chateau Pavie","vintage":2018,"bottles":3,"varietal":"Merlot / Cab. Franc","country":"France","region":"Saint-\u00c9milion, Bordeaux","rating":"98 WA","price":380.0,"mtm":1140.0,"drinking":"2028-2048","notes":"Cardboard","location":"1976"},{"wine":"Cos D'Estournel","vintage":2018,"bottles":2,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Saint-Est\u00e8phe, Bordeaux","rating":"96 WS","price":300.0,"mtm":600.0,"drinking":"2026-2042","notes":"","location":"1976"},{"wine":"Chateau Lafite Rothschild","vintage":2018,"bottles":3,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Pauillac, Bordeaux","rating":"98 WA","price":1160.0,"mtm":3480.0,"drinking":"2028-2055","notes":"","location":"1976"},{"wine":"Mouton Rothschild","vintage":2018,"bottles":2,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Pauillac, Bordeaux","rating":"100 WA","price":700.0,"mtm":1400.0,"drinking":"2028-2050","notes":"","location":"1976"},{"wine":"Harlan Estate","vintage":2017,"bottles":2,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Napa Valley, CA","rating":"100 WA","price":1335.0,"mtm":2670.0,"drinking":"2025-2042","notes":"","location":"1976"},{"wine":"Haut Brion","vintage":2020,"bottles":3,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Pessac-L\u00e9ognan, Bordeaux","rating":"100 WA","price":800.0,"mtm":2400.0,"drinking":"2028-2050","notes":"Cardboard","location":"1976"},{"wine":"Mouton Rothschild","vintage":2018,"bottles":1,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Pauillac, Bordeaux","rating":"100 WA","price":700.0,"mtm":700.0,"drinking":"2028-2050","notes":"1.5L","location":"1976"},{"wine":"Covert - Cab Franc","vintage":2021,"bottles":2,"varietal":"Cabernet Franc","country":"USA","region":"Coombsville, Napa Valley","rating":"92 WA","price":95.0,"mtm":190.0,"drinking":"2025-2038","notes":"OG cardboard box","location":"1734"},{"wine":"Covert - Cab Sauv Sage Estate","vintage":2021,"bottles":2,"varietal":"Cabernet Sauvignon","country":"USA","region":"Coombsville, Napa Valley","rating":"93 WA","price":95.0,"mtm":190.0,"drinking":"2025-2038","notes":"","location":"1734"},{"wine":"Covert - Cab Sauv Clone 341","vintage":2021,"bottles":2,"varietal":"Cabernet Sauvignon","country":"USA","region":"Coombsville, Napa Valley","rating":"93 WA","price":95.0,"mtm":190.0,"drinking":"2025-2038","notes":"","location":"1734"},{"wine":"Covert - Cab Sauv Clone 337/191","vintage":2021,"bottles":6,"varietal":"Cabernet Sauvignon","country":"USA","region":"Coombsville, Napa Valley","rating":"93 WA","price":95.0,"mtm":570.0,"drinking":"2025-2038","notes":"OG cardboard box","location":"1734"},{"wine":"Memento Mori","vintage":2021,"bottles":3,"varietal":"Cabernet Sauvignon","country":"USA","region":"Napa Valley, CA","rating":"98 WA","price":300.0,"mtm":900.0,"drinking":"2027-2045","notes":"OG cardboard box","location":"1734"},{"wine":"Memento Mori","vintage":2015,"bottles":1,"varietal":"Cabernet Sauvignon","country":"USA","region":"Napa Valley, CA","rating":"98 WA","price":350.0,"mtm":350.0,"drinking":"2025-2042","notes":"OG cardboard box","location":"1734"},{"wine":"Memento Mori","vintage":2016,"bottles":1,"varietal":"Cabernet Sauvignon","country":"USA","region":"Napa Valley, CA","rating":"98 WA","price":375.0,"mtm":375.0,"drinking":"2025-2043","notes":"","location":"1734"},{"wine":"Memento Mori","vintage":2017,"bottles":1,"varietal":"Cabernet Sauvignon","country":"USA","region":"Napa Valley, CA","rating":"98 WA","price":400.0,"mtm":400.0,"drinking":"2026-2044","notes":"","location":"1734"},{"wine":"Figeac","vintage":2020,"bottles":6,"varietal":"Cab. Franc / Cab. Sauv.","country":"France","region":"Saint-\u00c9milion, Bordeaux","rating":"100 WA","price":350.0,"mtm":2100.0,"drinking":"2028-2050","notes":"OG wood box","location":"1734"},{"wine":"Harlan Estate","vintage":2019,"bottles":1,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Napa Valley, CA","rating":"100 WA","price":1791.0,"mtm":1791.0,"drinking":"2027-2050","notes":"1.5L \u2014 OG wood box","location":"1734"},{"wine":"Harlan Estate","vintage":2019,"bottles":3,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Napa Valley, CA","rating":"100 WA","price":1791.0,"mtm":5373.0,"drinking":"2027-2050","notes":"750ml \u2014 OG wood box","location":"1734"},{"wine":"Cos D'Estournel","vintage":2022,"bottles":2,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Saint-Est\u00e8phe, Bordeaux","rating":"96 WS","price":300.0,"mtm":600.0,"drinking":"2026-2042","notes":"","location":"Home"},{"wine":"Mouton Rothschild","vintage":2022,"bottles":2,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Pauillac, Bordeaux","rating":"100 WA","price":700.0,"mtm":1400.0,"drinking":"2028-2050","notes":"","location":"Home"},{"wine":"Haut Brion","vintage":2022,"bottles":1,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Pessac-L\u00e9ognan, Bordeaux","rating":"100 WA","price":800.0,"mtm":2400.0,"drinking":"2028-2050","notes":"Cardboard","location":"Home"},{"wine":"Mouton Rothschild","vintage":2022,"bottles":2,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Pauillac, Bordeaux","rating":"100 WA","price":700.0,"mtm":700.0,"drinking":"2028-2050","notes":"1.5L","location":"Home"},{"wine":"Harlan Estate","vintage":2021,"bottles":2,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Napa Valley, CA","rating":"100 WA","price":1791.0,"mtm":1791.0,"drinking":"2027-2050","notes":"1.5L \u2014 OG wood box","location":"Home"},{"wine":"Harlan Estate","vintage":2022,"bottles":1,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Napa Valley, CA","rating":"100 WA","price":1791.0,"mtm":1791.0,"drinking":"2027-2050","notes":"1.5L \u2014 OG wood box","location":"Home"},{"wine":"Chateau Cheval Blanc","vintage":2022,"bottles":2,"varietal":"Merlot / Cab. Franc","country":"France","region":"Saint-\u00c9milion, Bordeaux","rating":"99 WA","price":880.0,"mtm":1760.0,"drinking":"2030-2055","notes":"","location":"Home"},{"wine":"Chateau Cheval Blanc","vintage":2018,"bottles":1,"varietal":"Merlot / Cab. Franc","country":"France","region":"Saint-\u00c9milion, Bordeaux","rating":"97 WA","price":844.0,"mtm":844.0,"drinking":"2026-2045","notes":"","location":"Home"},{"wine":"Scarecrow","vintage":2021,"bottles":1,"varietal":"Cabernet Sauvignon","country":"USA","region":"Rutherford, Napa Valley","rating":"100 JD","price":992.0,"mtm":992.0,"drinking":"2025-2045","notes":"","location":"Home"},{"wine":"Chateau Pavie","vintage":2005,"bottles":2,"varietal":"Merlot / Cab. Franc","country":"France","region":"Saint-\u00c9milion, Bordeaux","rating":"98 WA","price":380.0,"mtm":1140.0,"drinking":"2028-2048","notes":"Cardboard","location":"Home"},{"wine":"Chateau Pavie","vintage":2009,"bottles":1,"varietal":"Merlot / Cab. Franc","country":"France","region":"Saint-\u00c9milion, Bordeaux","rating":"98 WA","price":380.0,"mtm":1140.0,"drinking":"2028-2048","notes":"Cardboard","location":"Home"},{"wine":"Chateau Pavie","vintage":2004,"bottles":1,"varietal":"Merlot / Cab. Franc","country":"France","region":"Saint-\u00c9milion, Bordeaux","rating":"98 WA","price":380.0,"mtm":1140.0,"drinking":"2028-2048","notes":"Cardboard","location":"Home"},{"wine":"Chateau Pavie","vintage":2001,"bottles":1,"varietal":"Merlot / Cab. Franc","country":"France","region":"Saint-\u00c9milion, Bordeaux","rating":"98 WA","price":380.0,"mtm":1140.0,"drinking":"2028-2048","notes":"Cardboard","location":"Home"},{"wine":"Chateau Margaux","vintage":2005,"bottles":1,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Margaux, Bordeaux","rating":"97 WA","price":1200.0,"mtm":1200.0,"drinking":"2025-2050","notes":"","location":"Home"},{"wine":"Chateau Margaux","vintage":2022,"bottles":2,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Margaux, Bordeaux","rating":"98 WA","price":817.0,"mtm":1634.0,"drinking":"2030-2055","notes":"","location":"Home"},{"wine":"Ducru-Beaucaillou","vintage":2022,"bottles":2,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Saint-Julien, Bordeaux","rating":"97 WS","price":298.0,"mtm":596.0,"drinking":"2030-2065","notes":"","location":"Home"},{"wine":"Kapcsandy Grand Vin","vintage":2021,"bottles":2,"varietal":"Cabernet Sauvignon blend","country":"USA","region":"Yountville, Napa Valley","rating":"96 WA","price":325.0,"mtm":325.0,"drinking":"2024-2040","notes":"","location":"Home"},{"wine":"Palmer","vintage":2022,"bottles":1,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Margaux, Bordeaux","rating":"97 WA","price":435.0,"mtm":435.0,"drinking":"2030-2050","notes":"","location":"Home"},{"wine":"Sassicaia","vintage":2021,"bottles":2,"varietal":"Cabernet Sauvignon blend","country":"Italy","region":"Bolgheri, Tuscany","rating":"97 WS","price":315.0,"mtm":630.0,"drinking":"2027-2045","notes":"","location":"Home"},{"wine":"Chaves Hermitage","vintage":2020,"bottles":1,"varietal":"Syrah","country":"France","region":"Hermitage, Northern Rh\u00f4ne","rating":"95 WS","price":400.0,"mtm":400.0,"drinking":"2030-2050","notes":"","location":"Home"},{"wine":"Chateau Lafite Rothschild","vintage":2022,"bottles":3,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Pauillac, Bordeaux","rating":"98 WA","price":1160.0,"mtm":3480.0,"drinking":"2028-2055","notes":"","location":"Home"},{"wine":"Chateau Lafite Rothschild","vintage":1996,"bottles":1,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Pauillac, Bordeaux","rating":"98 WA","price":1160.0,"mtm":3480.0,"drinking":"2028-2055","notes":"","location":"Home"},{"wine":"Chateau Lafite Rothschild","vintage":2001,"bottles":1,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Pauillac, Bordeaux","rating":"98 WA","price":1160.0,"mtm":3480.0,"drinking":"2028-2055","notes":"","location":"Home"},{"wine":"Sine Qua Non - Profuga - Grenache","vintage":2018,"bottles":1,"varietal":"Grenache","country":"USA","region":"Sta. Rita Hills, CA","rating":"99 WA","price":467.0,"mtm":467.0,"drinking":"2026-2040","notes":"","location":"Home"},{"wine":"Sine Qua Non - Eleven Confessions - Grenache","vintage":2020,"bottles":1,"varietal":"Grenache","country":"USA","region":"Sta. Rita Hills, CA","rating":"96 WS","price":433.0,"mtm":433.0,"drinking":"2026-2040","notes":"","location":"Home"},{"wine":"Sine Qua Non - Eleven Confessions - Syrah","vintage":2018,"bottles":1,"varietal":"Syrah","country":"USA","region":"Sta. Rita Hills, CA","rating":"99 WA","price":482.0,"mtm":482.0,"drinking":"2026-2042","notes":"","location":"Home"},{"wine":"Sine Qua Non - Distenta I","vintage":2019,"bottles":1,"varietal":"Syrah","country":"USA","region":"Santa Barbara, CA","rating":"100 WA","price":318.0,"mtm":318.0,"drinking":"2026-2042","notes":"","location":"Home"},{"wine":"Sine Qua Non - Distenta II - Syrah","vintage":2020,"bottles":1,"varietal":"Syrah","country":"USA","region":"Santa Barbara, CA","rating":"97 WA","price":318.0,"mtm":318.0,"drinking":"2026-2042","notes":"","location":"Home"},{"wine":"Sine Qua Non - Distenta III","vintage":2021,"bottles":1,"varietal":"Syrah","country":"USA","region":"Santa Barbara, CA","rating":"97 WA","price":304.0,"mtm":304.0,"drinking":"2027-2043","notes":"","location":"Home"},{"wine":"Sine Qua Non - Eleven Confessions - Syrah","vintage":2020,"bottles":1,"varietal":"Syrah","country":"USA","region":"Sta. Rita Hills, CA","rating":"96 WA","price":452.0,"mtm":452.0,"drinking":"2026-2042","notes":"","location":"Home"},{"wine":"Sine Qua Non - Distenta II - Grenache","vintage":2020,"bottles":1,"varietal":"Grenache","country":"USA","region":"Santa Barbara, CA","rating":"100 JD","price":350.0,"mtm":350.0,"drinking":"2026-2042","notes":"","location":"Home"},{"wine":"Nuestra Senora del Tercer Gemelo","vintage":2021,"bottles":2,"varietal":"Grenache / Mourvèdre blend","country":"USA","region":"Los Alamos, CA","rating":"100 JD","price":463.0,"mtm":926.0,"drinking":"2027-2045","notes":"","location":"Home"},{"wine":"Nuestra Senora del Tercer Gemelo","vintage":2016,"bottles":1,"varietal":"Grenache / Mourvèdre blend","country":"USA","region":"Los Alamos, CA","rating":"97 WA","price":515.0,"mtm":515.0,"drinking":"2025-2042","notes":"","location":"Home"},{"wine":"Mouton Rothschild","vintage":2018,"bottles":2,"varietal":"Cabernet Sauvignon blend","country":"France","region":"Pauillac, Bordeaux","rating":"100 WA","price":700.0,"mtm":1400.0,"drinking":"2028-2050","notes":"","location":"Home"}];
+
+// Build varietal dropdown
+const varietals = [...new Set(WINES.map(w => w.varietal).filter(Boolean))].sort();
+const vSelect = document.getElementById('filter-varietal');
+varietals.forEach(v => {
+  const o = document.createElement('option');
+  o.value = v; o.textContent = v;
+  vSelect.appendChild(o);
+});
+
+// Portfolio stats
+const totalBottles = WINES.reduce((s, w) => s + w.bottles, 0);
+const totalMTM = WINES.reduce((s, w) => s + w.mtm, 0);
+document.getElementById('stat-wines').textContent = WINES.length;
+document.getElementById('stat-bottles').textContent = totalBottles;
+document.getElementById('stat-value').textContent = '$' + (totalMTM/1000).toFixed(0) + 'k';
+document.getElementById('stat-avg').textContent = '$' + Math.round(totalMTM / totalBottles).toLocaleString();
+
+// State
+let currentSort = 'name';
+let isListView = false;
+let filtered = [...WINES];
+
+function getRatingNum(r) {
+  return parseInt(r) || 0;
+}
+
+function sortWines(wines) {
+  return [...wines].sort((a, b) => {
+    if (currentSort === 'name') return a.wine.localeCompare(b.wine);
+    if (currentSort === 'vintage') return b.vintage - a.vintage;
+    if (currentSort === 'rating') return getRatingNum(b.rating) - getRatingNum(a.rating);
+    if (currentSort === 'price') return b.price - a.price;
+    return 0;
+  });
+}
+
+function scoreColor(r) {
+  const n = getRatingNum(r);
+  if (n >= 100) return '#e8c86e';
+  if (n >= 97) return '#c8a96e';
+  return 'var(--muted)';
+}
+
+function drinkBar(w) {
+  const now = 2026;
+  const parts = (w.drinking || '').split('-').map(Number);
+  if (parts.length < 2 || !parts[0]) return '';
+  const [start, end] = parts;
+  const span = end - 1995;
+  const s = Math.max(0, Math.min(100, ((start - 1995) / span) * 100));
+  const e = Math.min(100, ((now - 1995) / span) * 100);
+  const inWindow = now >= start && now <= end;
+  return `<div class="drink-window">Drink ${w.drinking} ${inWindow ? '· <span style="color:var(--gold)">In window</span>' : ''}</div>
+  <div class="drink-bar"><div class="drink-fill" style="left:${s}%;width:${Math.max(0,e-s)}%"></div></div>`;
+}
+
+function lockerLabel(loc) {
+  if (loc === 'Home') return 'Home';
+  return `Locker ${loc}`;
+}
+
+function renderCards(wines) {
+  const grid = document.getElementById('wine-grid');
+  grid.innerHTML = '';
+  
+  if (wines.length === 0) {
+    grid.innerHTML = `<div class="empty" style="grid-column:1/-1">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M9 3H5a2 2 0 00-2 2v4m6-6h10a2 2 0 012 2v4M9 3v18m0 0h10a2 2 0 002-2V9M9 21H5a2 2 0 01-2-2V9m0 0h18"/></svg>
+      <p>Aucun vin trouvé</p></div>`;
+    return;
+  }
+
+  const sorted = sortWines(wines);
+  sorted.forEach((w, i) => {
+    const card = document.createElement('div');
+    card.className = 'wine-card';
+    const scoreNum = getRatingNum(w.rating);
+    const scoreStr = w.rating ? w.rating.replace(/\s*(WA|WS|JD|WE)\s*/g, '') : '';
+    const ratingSource = w.rating ? w.rating.replace(/\d+\s*/g, '') : '';
+    card.innerHTML = `
+      ${w.rating ? `<div class="score-badge" style="color:${scoreColor(w.rating)}">${scoreNum}<small>${ratingSource}</small></div>` : ''}
+      <div class="wine-location-tag">${lockerLabel(w.location)}</div>
+      <div class="wine-name">${w.wine}</div>
+      <div class="wine-vintage">${w.vintage}${w.notes && w.notes.includes('1.5L') ? ' · <span style="font-size:0.75rem;color:var(--muted)">1.5L</span>' : ''}</div>
+      <div class="wine-meta">${[w.varietal, w.region].filter(Boolean).join(' · ')}</div>
+      <div class="wine-footer">
+        <div>
+          <div class="wine-bottles"><strong>${w.bottles}</strong>btl${w.bottles > 1 ? 's' : ''}</div>
+        </div>
+        <div class="wine-price">
+          <span class="price-val">$${w.price.toLocaleString()}</span>
+          <span class="price-label">/ bottle</span>
+        </div>
+      </div>
+      ${drinkBar(w)}
+    `;
+    card.addEventListener('click', () => openModal(w));
+    card.style.animationDelay = `${i * 0.02}s`;
+    grid.appendChild(card);
+  });
+
+  // Update results info
+  const totalF = wines.reduce((s, w) => s + w.bottles, 0);
+  const totalV = wines.reduce((s, w) => s + w.mtm, 0);
+  document.getElementById('results-info').innerHTML = 
+    `<span>${wines.length}</span> références · <span>${totalF}</span> bouteilles · MTM <span>$${Math.round(totalV).toLocaleString()}</span>`;
+}
+
+function applyFilters() {
+  const q = document.getElementById('search').value.toLowerCase();
+  const loc = document.getElementById('filter-location').value;
+  const country = document.getElementById('filter-country').value;
+  const varietal = document.getElementById('filter-varietal').value;
+
+  filtered = WINES.filter(w => {
+    if (q && !`${w.wine} ${w.varietal} ${w.region} ${w.country}`.toLowerCase().includes(q)) return false;
+    if (loc && w.location !== loc) return false;
+    if (country && w.country !== country) return false;
+    if (varietal && w.varietal !== varietal) return false;
+    return true;
+  });
+  renderCards(filtered);
+}
+
+// Sort buttons
+document.querySelectorAll('.sort-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.sort-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    currentSort = btn.dataset.sort;
+    renderCards(filtered);
+  });
+});
+
+// View toggle
+document.getElementById('grid-view').addEventListener('click', () => {
+  isListView = false;
+  document.getElementById('wine-grid').classList.remove('list-view');
+  document.getElementById('grid-view').classList.add('active');
+  document.getElementById('list-view').classList.remove('active');
+});
+document.getElementById('list-view').addEventListener('click', () => {
+  isListView = true;
+  document.getElementById('wine-grid').classList.add('list-view');
+  document.getElementById('list-view').classList.add('active');
+  document.getElementById('grid-view').classList.remove('active');
+});
+
+// Filter events
+document.getElementById('search').addEventListener('input', applyFilters);
+document.getElementById('filter-location').addEventListener('change', applyFilters);
+document.getElementById('filter-country').addEventListener('change', applyFilters);
+document.getElementById('filter-varietal').addEventListener('change', applyFilters);
+
+// Modal
+function openModal(w) {
+  document.getElementById('m-location').textContent = lockerLabel(w.location);
+  document.getElementById('m-name').textContent = w.wine;
+  document.getElementById('m-vintage').textContent = w.vintage;
+  const scoreNum = getRatingNum(w.rating);
+  const ratingSource = w.rating ? w.rating.replace(/\d+\s*/g, '') : '';
+  document.getElementById('m-score').innerHTML = w.rating 
+    ? `${scoreNum} <small>${ratingSource}</small>` : '—';
+  document.getElementById('m-score').style.color = scoreColor(w.rating);
+  document.getElementById('m-bottles').innerHTML = `<span style="font-size:2rem;font-family:'Cormorant Garamond',serif">${w.bottles}</span> bottle${w.bottles>1?'s':''}`;
+  document.getElementById('m-varietal').textContent = w.varietal || '—';
+  document.getElementById('m-country').textContent = w.country || '—';
+  document.getElementById('m-region').textContent = w.region || '—';
+  document.getElementById('m-mtm').textContent = w.mtm ? '$' + w.mtm.toLocaleString() : '—';
+  if (w.drinking) {
+    document.getElementById('m-drink').textContent = w.drinking;
+    document.getElementById('m-drink-wrap').style.display = '';
+  } else {
+    document.getElementById('m-drink-wrap').style.display = 'none';
+  }
+  const notesEl = document.getElementById('m-notes');
+  if (w.notes) {
+    notesEl.textContent = w.notes;
+    notesEl.style.display = '';
+  } else {
+    notesEl.style.display = 'none';
+  }
+  document.getElementById('modal').classList.add('open');
+}
+
+document.getElementById('modal-close').addEventListener('click', () => {
+  document.getElementById('modal').classList.remove('open');
+});
+
+document.getElementById('modal').addEventListener('click', e => {
+  if (e.target === document.getElementById('modal')) {
+    document.getElementById('modal').classList.remove('open');
+  }
+});
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'Escape') document.getElementById('modal').classList.remove('open');
+});
+
+// Init
+renderCards(WINES);
+</script>
+
+<!-- ── Login Screen ── -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-brand-sub">Collection Privée</div>
+    <div class="login-brand-title"><em>Cave</em> à Vin</div>
+    <div class="login-field">
+      <label>Username</label>
+      <input type="text" id="login-user" autocomplete="username" autocapitalize="none" spellcheck="false">
+    </div>
+    <div class="login-field">
+      <label>Password</label>
+      <input type="password" id="login-pass" autocomplete="current-password">
+    </div>
+    <button class="login-btn" id="login-btn">Enter</button>
+    <div class="login-error" id="login-error">Incorrect username or password</div>
+  </div>
+</div>
+
+<script>
+  // ── Credentials — change these to whatever you like ──
+  const AUTH_USER = 'carlos';
+  const AUTH_PASS = 'cave2026';
+  // ─────────────────────────────────────────────────────
+
+  const SESSION_KEY = 'cav_auth';
+
+  function checkAuth() {
+    return sessionStorage.getItem(SESSION_KEY) === '1';
+  }
+
+  function unlock() {
+    document.getElementById('login-screen').style.display = 'none';
+  }
+
+  function tryLogin() {
+    const u = document.getElementById('login-user').value.trim();
+    const p = document.getElementById('login-pass').value;
+    if (u === AUTH_USER && p === AUTH_PASS) {
+      sessionStorage.setItem(SESSION_KEY, '1');
+      unlock();
+    } else {
+      const err = document.getElementById('login-error');
+      err.classList.add('show');
+      document.getElementById('login-pass').value = '';
+      document.getElementById('login-pass').focus();
+      setTimeout(() => err.classList.remove('show'), 3000);
+    }
+  }
+
+  document.getElementById('login-btn').addEventListener('click', tryLogin);
+  document.getElementById('login-pass').addEventListener('keydown', e => {
+    if (e.key === 'Enter') tryLogin();
+  });
+  document.getElementById('login-user').addEventListener('keydown', e => {
+    if (e.key === 'Enter') document.getElementById('login-pass').focus();
+  });
+
+  // Auto-unlock if already authenticated this session
+  if (checkAuth()) unlock();
+</script>
+</body>
+</html>
